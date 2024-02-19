@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_call/app/core/app_constants.dart';
 import 'package:flutter_video_call/app/modules/videocall/controllers/videocall_controller.dart';
+import 'package:flutter_video_call/widgets/video_view_grid_item.dart';
 
 import 'package:get/get.dart';
 
@@ -153,7 +151,6 @@ class VideoCallView extends GetView<VideoCallViewController> {
   }
 
   Widget _buildRemoteViews() {
-    print("Dataaaaaaaaaaa : ${controller.remoteUids}");
     if (controller.remoteUids.length == 1) {
       return AgoraVideoView(
         controller: VideoViewController.remote(
@@ -163,41 +160,57 @@ class VideoCallView extends GetView<VideoCallViewController> {
               RtcConnection(channelId: controller.channelNameMain.value),
         ),
       );
-    } else if (controller.remoteUids.length > 1) {
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 300,
-              width: 300,
-              child: AgoraVideoView(
-                controller: VideoViewController.remote(
-                  rtcEngine: controller.engine,
-                  canvas: VideoCanvas(uid: controller.remoteUids[0]),
-                  connection: RtcConnection(
-                      channelId: controller.channelNameMain.value),
-                ),
+    } else if (controller.remoteUids.length == 2) {
+      return Column(
+        children: [
+          Expanded(
+            // flex: 3,
+            child: GridView.builder(
+              itemCount: 4,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
               ),
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: VideoViewGridItem(
+                    userId: controller.remoteUids[index],
+                    channelName: '',
+                    engine: controller.engine,
+                    isVideoOn: true,
+                  ),
+                );
+              },
             ),
-            Container(
-              height: 300,
-              width: 300,
-              child: AgoraVideoView(
-                controller: VideoViewController.remote(
-                  rtcEngine: controller.engine,
-                  canvas: VideoCanvas(uid: controller.remoteUids[1]),
-                  connection: RtcConnection(
-                      channelId: controller.channelNameMain.value),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       );
     } else {
-      return const Text(
-        'More than 2',
-        style: TextStyle(color: Colors.white),
+      return Column(
+        children: [
+          Expanded(
+            // flex: 3,
+            child: GridView.builder(
+              itemCount: 4,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: VideoViewGridItem(
+                    userId: controller.remoteUids[index],
+                    channelName: '',
+                    engine: controller.engine,
+                    isVideoOn: true,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       );
     }
   }

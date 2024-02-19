@@ -1,4 +1,8 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/widgets/video_view_grid_item.dart';
 
 import 'package:get/get.dart';
 
@@ -13,11 +17,45 @@ class OnboardingView extends GetView<OnboardingController> {
         title: const Text('OnboardingView'),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          'OnboardingView is working',
-          style: TextStyle(fontSize: 20),
-        ),
+      bottomSheet: Container(
+        height: 120,
+      ),
+      body: Column(
+        children: [
+          // Expanded(
+          //   flex: 3,
+          //   child: GridView.builder(
+          //     itemCount: 4,
+          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //       crossAxisCount: 2,
+          //       childAspectRatio: 0.8,
+          //     ),
+          //     itemBuilder: (BuildContext context, int index) {
+          //       return Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: VideoViewGridItem(userId: 1, channelName: '',engine: ),
+          //       );
+          //     },
+          //   ),
+          // ),
+          // Expanded(
+          //   flex: 1,
+          //   child: ListView.builder(
+          //     itemCount: 3,
+          //     scrollDirection: Axis.horizontal,
+          //     // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //     //   crossAxisCount: 2,
+          //     //   childAspectRatio: 0.7,
+          //     // ),
+          //     itemBuilder: (BuildContext context, int index) {
+          //       return Padding(
+          //         padding: const EdgeInsets.all(2.0),
+          //         child: VideoViewGridItem(nameInitial: index.toString()),
+          //       );
+          //     },
+          //   ),
+          // ),
+        ],
       ),
     );
   }

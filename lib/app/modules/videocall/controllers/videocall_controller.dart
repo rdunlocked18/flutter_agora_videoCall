@@ -134,7 +134,6 @@ class VideoCallViewController extends GetxController {
   void onCallEnd() {
     clear();
     update();
-    // Get.offAll(() => IndexPage());
   }
 
   void onToggleMute() {
