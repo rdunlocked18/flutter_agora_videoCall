@@ -29,7 +29,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.VIDEOCALL,
-      page: () => const VideocallView(),
+      page: () => const VideoCallView(),
       binding: VideocallBinding(),
     ),
   ];

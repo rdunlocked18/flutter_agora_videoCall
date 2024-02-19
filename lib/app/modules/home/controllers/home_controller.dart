@@ -1,145 +1,69 @@
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_video_call/app/core/app_constants.dart';
+import 'dart:math';
+
+import 'package:agora_uikit/agora_uikit.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  RxInt myremoteUid = 0.obs;
-  RxBool localUserJoined = false.obs;
-  RxBool muted = false.obs;
-  RxBool videoPaused = false.obs;
-  RxBool switchMainView = false.obs;
-  RxBool mutedVideo = false.obs;
-  RxBool reConnectingRemoteView = false.obs;
-  RxBool isFront = false.obs;
-  late RtcEngine engine;
+  TextEditingController channelNameController = TextEditingController();
+  List<Permission> permissions = [
+    Permission.camera,
+    Permission.microphone,
+  ];
 
   @override
   void onInit() {
     super.onInit();
-    initilize();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-    clear();
+  Future<void> requestPermissions() async {
+    if (channelNameController.text.isNotEmpty) {
+      var response = await getToken(channelNameController.text);
+      //
+      print(response['token']);
+      print(response['userId']);
+      //
+      await permissions.request().then(
+            (value) => Get.toNamed(
+              Routes.VIDEOCALL,
+              arguments: {
+                'userId': response['userId'],
+                'token': response['token'],
+                'channelName': channelNameController.text
+              },
+            ),
+          );
+    } else {
+      Get.showSnackbar(const GetSnackBar(
+        message: 'Please enter channel name',
+        duration: Duration(seconds: 3),
+        isDismissible: true,
+      ));
+    }
   }
+}
 
-  clear() {
-    engine.leaveChannel();
-    isFront.value = false;
-    reConnectingRemoteView.value = false;
-    videoPaused.value = false;
-    muted.value = false;
-    mutedVideo.value = false;
-    switchMainView.value = false;
-    localUserJoined.value = false;
-    update();
-  }
+Future<Map<String, dynamic>> getToken(String channelName) async {
+  int userId = random(100, 999);
 
-  Future<void> initilize() async {
-    Future.delayed(Duration.zero, () async {
-      await _initAgoraRtcEngine();
-      _addAgoraEventHandlers();
-      await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-      VideoEncoderConfiguration configuration =
-          const VideoEncoderConfiguration();
-      await engine.setVideoEncoderConfiguration(configuration);
-      await engine.leaveChannel();
-      await engine.joinChannel(
-        token: AppConstants.token,
-        channelId: AppConstants.channelName,
-        uid: 0,
-        options: const ChannelMediaOptions(),
-      );
-      update();
-    });
-  }
+  Dio dio = Dio();
+  var token = '';
 
-  Future<void> _initAgoraRtcEngine() async {
-    engine = createAgoraRtcEngine();
-    await engine.initialize(RtcEngineContext(
-      appId: AppConstants.agoraAppId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
-    await engine.enableVideo();
-    //await engine.startPreview();
-    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-  }
+  var response =
+      await dio.get('http://54.241.100.253/rtc/$channelName/0/uid/$userId');
 
-  void _addAgoraEventHandlers() {
-    engine.registerEventHandler(
-      RtcEngineEventHandler(
-          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-            localUserJoined.value = true;
-            update();
-          },
-          onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-            localUserJoined.value = true;
-            myremoteUid.value = remoteUid;
-            update();
-          },
-          onUserOffline: (RtcConnection connection, int remoteUid,
-              UserOfflineReasonType reason) {
-            if (reason == UserOfflineReasonType.userOfflineDropped) {
-              myremoteUid.value = 0;
-              onCallEnd();
-              update();
-            } else {
-              myremoteUid.value = 0;
-              onCallEnd();
-              update();
-            }
-          },
-          onRemoteVideoStats:
-              (RtcConnection connection, RemoteVideoStats remoteVideoStats) {
-            if (remoteVideoStats.receivedBitrate == 0) {
-              videoPaused.value = true;
-              update();
-            } else {
-              videoPaused.value = false;
-              update();
-            }
-          },
-          onTokenPrivilegeWillExpire:
-              (RtcConnection connection, String token) {},
-          onLeaveChannel: (RtcConnection connection, stats) {
-            clear();
-            onCallEnd();
-            update();
-          }),
-    );
+  if (response.data != null) {
+    print(response.data['rtcToken']);
+    token = response.data['rtcToken'];
   }
+  return {
+    'token': token,
+    'userId': userId,
+  };
+}
 
-  void onVideoOff() {
-    mutedVideo.value = !mutedVideo.value;
-    engine.muteLocalVideoStream(mutedVideo.value);
-    update();
-  }
-
-  void onCallEnd() {
-    clear();
-    update();
-    // Get.offAll(() => IndexPage());
-  }
-
-  void onToggleMute() {
-    muted.value = !muted.value;
-    engine.muteLocalAudioStream(muted.value);
-    update();
-  }
-
-  void onToggleMuteVideo() {
-    mutedVideo.value = !mutedVideo.value;
-    engine.muteLocalVideoStream(mutedVideo.value);
-    update();
-  }
-
-  void onSwitchCamera() {
-    engine.switchCamera().then((value) => {}).catchError((err) {
-      debugPrint(err);
-      return {'error': err};
-    });
-  }
+int random(int min, int max) {
+  return min + Random().nextInt(max - min);
 }
