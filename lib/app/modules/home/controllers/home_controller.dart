@@ -1,24 +1,143 @@
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:flutter_video_call/app/core/app_constants.dart';
+import 'package:flutter_video_call/app/widgets/agora_manager.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
-
-  final count = 0.obs;
+  RxInt myremoteUid = 0.obs;
+  RxBool localUserJoined = false.obs;
+  RxBool muted = false.obs;
+  RxBool videoPaused = false.obs;
+  RxBool switchMainView = false.obs;
+  RxBool mutedVideo = false.obs;
+  RxBool reConnectingRemoteView = false.obs;
+  RxBool isFront = false.obs;
+  late RtcEngine engine;
 
   @override
   void onInit() {
     super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
+    initilize();
   }
 
   @override
   void onClose() {
     super.onClose();
+    clear();
   }
 
-  void increment() => count.value++;
+  clear() {
+    engine.leaveChannel();
+    isFront.value = false;
+    reConnectingRemoteView.value = false;
+    videoPaused.value = false;
+    muted.value = false;
+    mutedVideo.value = false;
+    switchMainView.value = false;
+    localUserJoined.value = false;
+    update();
+  }
+
+  Future<void> initilize() async {
+    Future.delayed(Duration.zero, () async {
+      await _initAgoraRtcEngine();
+      _addAgoraEventHandlers();
+      await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+      VideoEncoderConfiguration configuration =
+          const VideoEncoderConfiguration();
+      await engine.setVideoEncoderConfiguration(configuration);
+      await engine.leaveChannel();
+      await engine.joinChannel(
+        token: AppConstants.token,
+        channelId: AppConstants.channelName,
+        uid: 0,
+        options: const ChannelMediaOptions(),
+      );
+      update();
+    });
+  }
+
+  Future<void> _initAgoraRtcEngine() async {
+    engine = createAgoraRtcEngine();
+    await engine.initialize(RtcEngineContext(
+      appId: AppConstants.agoraAppId,
+      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+    ));
+    await engine.enableVideo();
+    //await engine.startPreview();
+    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+  }
+
+  void _addAgoraEventHandlers() {
+    engine.registerEventHandler(
+      RtcEngineEventHandler(
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+            localUserJoined.value = true;
+            update();
+          },
+          onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+            localUserJoined.value = true;
+            myremoteUid.value = remoteUid;
+            update();
+          },
+          onUserOffline: (RtcConnection connection, int remoteUid,
+              UserOfflineReasonType reason) {
+            if (reason == UserOfflineReasonType.userOfflineDropped) {
+              myremoteUid.value = 0;
+              onCallEnd();
+              update();
+            } else {
+              myremoteUid.value = 0;
+              onCallEnd();
+              update();
+            }
+          },
+          onRemoteVideoStats:
+              (RtcConnection connection, RemoteVideoStats remoteVideoStats) {
+            if (remoteVideoStats.receivedBitrate == 0) {
+              videoPaused.value = true;
+              update();
+            } else {
+              videoPaused.value = false;
+              update();
+            }
+          },
+          onTokenPrivilegeWillExpire:
+              (RtcConnection connection, String token) {},
+          onLeaveChannel: (RtcConnection connection, stats) {
+            clear();
+            onCallEnd();
+            update();
+          }),
+    );
+  }
+
+  void onVideoOff() {
+    mutedVideo.value = !mutedVideo.value;
+    engine.muteLocalVideoStream(mutedVideo.value);
+    update();
+  }
+
+  void onCallEnd() {
+    clear();
+    update();
+    // Get.offAll(() => IndexPage());
+  }
+
+  void onToggleMute() {
+    muted.value = !muted.value;
+    engine.muteLocalAudioStream(muted.value);
+    update();
+  }
+
+  void onToggleMuteVideo() {
+    mutedVideo.value = !mutedVideo.value;
+    engine.muteLocalVideoStream(mutedVideo.value);
+    update();
+  }
+
+  void onSwitchCamera() {
+    engine.switchCamera().then((value) => {}).catchError((err) {});
+  }
 }
