@@ -35,8 +35,8 @@ class HomeView extends GetView<HomeController> {
                   child: Stack(
                     children: [
                       Center(
-                        child: controller.localUserJoined == true
-                            ? controller.videoPaused == true
+                        child: controller.localUserJoined.value == true
+                            ? controller.videoPaused.value == true
                                 ? Container(
                                     color: Colors.red,
                                     child: Center(
@@ -76,80 +76,78 @@ class HomeView extends GetView<HomeController> {
                                         canvas: const VideoCanvas(uid: 0),
                                       ),
                                     )
-                                  : CircularProgressIndicator()),
+                                  : const CircularProgressIndicator()),
                         ),
                       ),
                       Positioned(
                         bottom: 10,
                         left: 10,
                         right: 10,
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.onToggleMute();
-                                  },
-                                  child: Icon(
-                                    controller.muted.value
-                                        ? Icons.mic
-                                        : Icons.mic_off,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: InkWell(
+                                onTap: () {
+                                  controller.onToggleMute();
+                                },
+                                child: Icon(
+                                  controller.muted.value
+                                      ? Icons.mic
+                                      : Icons.mic_off,
+                                  size: 35,
+                                  color: Colors.white,
                                 ),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.onCallEnd();
-                                  },
-                                  child: const Icon(
-                                    Icons.call,
-                                    size: 35,
-                                    color: Colors.red,
-                                  ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: InkWell(
+                                onTap: () {
+                                  controller.onCallEnd();
+                                },
+                                child: const Icon(
+                                  Icons.call,
+                                  size: 35,
+                                  color: Colors.red,
                                 ),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.onVideoOff();
-                                  },
-                                  child: const CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(5),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.photo_camera_front,
-                                          size: 25,
-                                          color: Colors.black,
-                                        ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: InkWell(
+                                onTap: () {
+                                  controller.onVideoOff();
+                                },
+                                child: const CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.photo_camera_front,
+                                        size: 25,
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.onSwitchCamera();
-                                  },
-                                  child: const Icon(
-                                    Icons.switch_camera,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: InkWell(
+                                onTap: () {
+                                  controller.onSwitchCamera();
+                                },
+                                child: const Icon(
+                                  Icons.switch_camera,
+                                  size: 35,
+                                  color: Colors.white,
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
                       )
                     ],

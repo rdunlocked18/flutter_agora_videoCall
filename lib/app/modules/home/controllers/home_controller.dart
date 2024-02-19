@@ -1,8 +1,7 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
-import 'package:flutter_video_call/app/widgets/agora_manager.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeController extends GetxController {
   RxInt myremoteUid = 0.obs;
@@ -138,6 +137,9 @@ class HomeController extends GetxController {
   }
 
   void onSwitchCamera() {
-    engine.switchCamera().then((value) => {}).catchError((err) {});
+    engine.switchCamera().then((value) => {}).catchError((err) {
+      debugPrint(err);
+      return {'error': err};
+    });
   }
 }
