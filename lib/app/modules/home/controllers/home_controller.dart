@@ -5,8 +5,10 @@ import 'dart:math';
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/data/models/user.dart';
 import 'package:flutter_video_call/app/modules/home/views/group_video_call_home.dart';
 import 'package:flutter_video_call/app/modules/home/views/single_chat_view.dart';
+import 'package:flutter_video_call/app/modules/videocall/views/videocall_view.dart';
 import 'package:flutter_video_call/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
@@ -79,5 +81,50 @@ class HomeController extends GetxController {
 
   int random(int min, int max) {
     return min + Random().nextInt(max - min);
+  }
+
+  RxList<User> chatUsers = <User>[
+    User(
+      userId: 123,
+      userName: 'Max Lane',
+      profileUrl: 'https://api.multiavatar.com/Binx%20Bond.png',
+      message: 'Hi How are you ?',
+    ),
+    User(
+      userId: 124,
+      userName: 'Tine Super',
+      profileUrl: 'https://api.multiavatar.com/Tine%20Bond2.png',
+      message: 'Dont laugh ! :(',
+    ),
+    User(
+      userId: 125,
+      userName: 'Suo Timo',
+      profileUrl: 'https://api.multiavatar.com/burys.png',
+      message: 'I dont like tom',
+    ),
+    User(
+      userId: 126,
+      userName: 'Andrew Lane',
+      profileUrl: 'https://api.multiavatar.com/roibut.png',
+      message: 'I am not going',
+    ),
+    User(
+      userId: 127,
+      userName: 'Tom Cruise',
+      profileUrl: 'https://api.multiavatar.com/gauz%20but.png',
+      message: 'Coffee bro at my place?',
+    ),
+    User(
+      userId: 128,
+      userName: 'Crux Main',
+      profileUrl: 'https://api.multiavatar.com/Binx%2time2.png',
+      message: 'Can we meet ?',
+    ),
+  ].obs;
+
+  Future<void> startPersonalVideoCall() async {
+    await permissions.request().then((value) {
+      Get.toNamed(Routes.VIDEOCALL);
+    });
   }
 }

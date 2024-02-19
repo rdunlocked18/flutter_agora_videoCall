@@ -13,15 +13,22 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Colors.grey.shade100,
           onTap: (value) {
             controller.onBottomNavigationTapped(value);
           },
+          selectedItemColor: const Color(0xDBF14D6E),
           currentIndex: controller.currentIndex.value,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Iconsax.message), label: 'Chats'),
+              icon: Icon(Iconsax.message),
+              label: 'Chats',
+            ),
             BottomNavigationBarItem(
-                icon: Icon(Iconsax.call_add), label: 'Calls')
+              icon: Icon(Iconsax.call_add),
+              label: 'Calls',
+            )
           ],
         ),
       ),
