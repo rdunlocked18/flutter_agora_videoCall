@@ -18,14 +18,25 @@ class VideoCallView extends GetView<VideoCallViewController> {
           backgroundColor: Colors.black.withOpacity(0.2),
           elevation: 0,
           title: Text(
-            controller.channelNameMain.value,
+            'Meeting : ${controller.channelNameMain.value}',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 25,
+              fontSize: 15,
             ),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                controller.shareMeetingInfo();
+              },
+              icon: const Icon(
+                Iconsax.share,
+                color: Colors.white,
+              ),
+            )
+          ],
           leading: BackButton(
             color: Colors.white,
             onPressed: () {

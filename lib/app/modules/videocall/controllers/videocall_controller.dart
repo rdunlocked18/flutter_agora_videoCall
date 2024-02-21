@@ -1,8 +1,10 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 
 class VideoCallViewController extends GetxController {
   RxInt myremoteUid = 0.obs;
@@ -17,7 +19,7 @@ class VideoCallViewController extends GetxController {
   RxList<int> remoteUids = RxList<int>.empty();
   RxString channelNameMain = ''.obs;
 
-  late Rx<Offset> offset = Offset(0, 0).obs;
+  late Rx<Offset> offset = const Offset(0, 0).obs;
 
   @override
   void onInit() {
@@ -50,7 +52,7 @@ class VideoCallViewController extends GetxController {
     var userId = arguments['userId'];
     channelNameMain.value = arguments['channelName'];
 
-    print("Dataa : $_token $userId ${channelNameMain.value}");
+    debugPrint("Argument Dataa : $_token $userId ${channelNameMain.value}");
 
     Future.delayed(Duration.zero, () async {
       await _initAgoraRtcEngine();
@@ -157,6 +159,12 @@ class VideoCallViewController extends GetxController {
       debugPrint(err);
       return {'error': err};
     });
+  }
+
+  Future<void> shareMeetingInfo() async {
+    // print('share started');
+
+    await Share.share('Join my meeting with code: $channelNameMain');
   }
 
   @override
