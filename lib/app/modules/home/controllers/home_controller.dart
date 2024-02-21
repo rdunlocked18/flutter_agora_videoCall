@@ -20,6 +20,7 @@ class HomeController extends GetxController {
   RxList<Widget> screens = [SingleChatView(), GroupVideoCall()].obs;
   RxInt currentIndex = 0.obs;
   late PageController pageController;
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -55,6 +56,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> startInstantMeeting() async {
+    isLoading.value = true;
     var _channelName = await createRandomChannelName();
     var _response = await getToken(_channelName);
 
@@ -92,7 +94,7 @@ class HomeController extends GetxController {
     if (response.data != null) {
       token = response.data['rtcToken'];
     }
-
+    isLoading.value = false;
     return {
       'token': token,
       'userId': userId,
@@ -100,7 +102,7 @@ class HomeController extends GetxController {
   }
 
   Future<String> createRandomChannelName() async {
-    var channelName = await nanoid(10);
+    var channelName = await nanoid(4);
     return channelName;
   }
 
