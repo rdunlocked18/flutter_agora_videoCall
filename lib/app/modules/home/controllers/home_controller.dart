@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers
 import 'dart:math';
-import 'package:agora_uikit/agora_uikit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/data/models/user.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_video_call/app/modules/home/views/single_chat_view.dart'
 import 'package:flutter_video_call/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:nanoid/async.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeController extends GetxController {
   TextEditingController channelNameController = TextEditingController();
@@ -32,8 +32,8 @@ class HomeController extends GetxController {
     if (channelNameController.text.isNotEmpty) {
       var response = await getToken(channelNameController.text);
       //
-      debugPrint(response['token']);
-      debugPrint(response['userId']);
+      //debugPrint(response['token']);
+      // debugPrint(response['userId']);
       //
       await permissions.request().then(
             (value) => Get.toNamed(
@@ -55,11 +55,12 @@ class HomeController extends GetxController {
   }
 
   Future<void> startInstantMeeting() async {
-    var _response = await getToken(channelNameController.text);
     var _channelName = await createRandomChannelName();
-    debugPrint(_response['token']);
-    debugPrint(_response['userId']);
-    debugPrint(_channelName);
+    var _response = await getToken(_channelName);
+
+    //debugPrint(_response['token']);
+    //  debugPrint(_response['userId']);
+    // debugPrint(_channelName);
     //
 
     await permissions.request().then(

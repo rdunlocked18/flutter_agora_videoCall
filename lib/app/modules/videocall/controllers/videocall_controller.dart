@@ -4,7 +4,6 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
 
 class VideoCallViewController extends GetxController {
   RxInt myremoteUid = 0.obs;
@@ -164,7 +163,7 @@ class VideoCallViewController extends GetxController {
   Future<void> shareMeetingInfo() async {
     // print('share started');
 
-    await Share.share('Join my meeting with code: $channelNameMain');
+    // await Share.share('Join my meeting with code: $channelNameMain');
   }
 
   @override
