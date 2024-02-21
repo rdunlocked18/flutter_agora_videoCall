@@ -6,13 +6,11 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
-  static const ONBOARDING = _Paths.ONBOARDING;
   static const VIDEOCALL = _Paths.VIDEOCALL;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
-  static const ONBOARDING = '/onboarding';
   static const VIDEOCALL = '/videocall';
 }

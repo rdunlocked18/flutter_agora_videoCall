@@ -1,8 +1,8 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/core/app_enums.dart';
 import 'package:flutter_video_call/app/modules/videocall/controllers/videocall_controller.dart';
 import 'package:flutter_video_call/widgets/video_view_grid_item.dart';
-import 'package:gap/gap.dart';
 
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -18,7 +18,9 @@ class VideoCallView extends GetView<VideoCallViewController> {
           backgroundColor: Colors.black.withOpacity(0.2),
           elevation: 0,
           title: Text(
-            'Meeting : ${controller.channelNameMain.value}',
+            controller.videocallType == VideoCallViewType.group
+                ? 'Meeting : ${controller.channelNameMain.value}'
+                : 'Personal : ${controller.channelNameMain.value}',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -58,7 +60,7 @@ class VideoCallView extends GetView<VideoCallViewController> {
                         SizedBox(height: 10),
                         Center(
                           child: Text(
-                            'Waiting for others to join',
+                            'Waiting for others to join..',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -68,32 +70,49 @@ class VideoCallView extends GetView<VideoCallViewController> {
                       padding: const EdgeInsets.all(10),
                       child: Stack(
                         children: [
-                          Center(
-                            child: controller.localUserJoined.value == true
-                                ? controller.videoPaused.value == true
-                                    ? Container(
-                                        color: Colors.red,
-                                        child: Center(
-                                            child: Text(
-                                          "Remote Video Paused",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(color: Colors.white70),
-                                        )))
-                                    : _buildRemoteViews()
-                                : const Center(
-                                    child: Text(
-                                      'No Remote',
-                                      style: TextStyle(color: Colors.white),
+                          controller.videocallType == VideoCallViewType.group
+                              ? Center(
+                                  child: controller.localUserJoined.value ==
+                                          true
+                                      ? controller.videoPaused.value == true
+                                          ? Container(
+                                              color: Colors.red,
+                                              child: Center(
+                                                  child: Text(
+                                                "Remote Video Paused",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall!
+                                                    .copyWith(
+                                                        color: Colors.white70),
+                                              )))
+                                          : _buildRemoteViews()
+                                      : const Center(
+                                          child: Text(
+                                            'No Remote',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                )
+                              : Center(
+                                  child: AgoraVideoView(
+                                    controller: VideoViewController.remote(
+                                      rtcEngine: controller.engine,
+                                      canvas: VideoCanvas(
+                                          uid: controller.remoteUids[0]),
+                                      connection: RtcConnection(
+                                          channelId:
+                                              controller.channelNameMain.value),
                                     ),
                                   ),
-                          ),
+                                ),
                           Obx(
-                            () => GestureDetector(
-                              onPanUpdate: (DragUpdateDetails details) {
-                                controller.offset.value += details.delta;
-                              },
+                            () => Draggable(
+                              feedback: const SizedBox(
+                                width: 200,
+                                height: 250,
+                              ),
                               child: Positioned(
                                 left: controller.offset.value.dx,
                                 top: controller.offset.value.dy,
@@ -215,23 +234,24 @@ class VideoCallView extends GetView<VideoCallViewController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 60,
-              width: 60,
+              height: 50,
+              width: 50,
               child: IconButton.filled(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.white),
                 ),
                 color: Colors.white,
                 onPressed: () {
-                  // controller.onSwitchCamera();
+                  controller.onToggleMute();
                 },
-                icon: const Icon(
-                  Iconsax.microphone5,
+                icon: Icon(
+                  controller.muted.value
+                      ? Iconsax.microphone5
+                      : Iconsax.microphone_slash5,
                   color: Colors.black,
                 ),
               ),
             ),
-            const Gap(10),
             SizedBox(
               height: 52,
               width: 200,
@@ -253,7 +273,7 @@ class VideoCallView extends GetView<VideoCallViewController> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  //controller.startvideoCustomChannelVideoCall();
+                  controller.onCallEnd();
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -268,17 +288,17 @@ class VideoCallView extends GetView<VideoCallViewController> {
                 ),
               ),
             ),
-            const Gap(10),
+            // const Gap(10),
             SizedBox(
-              height: 60,
-              width: 60,
+              height: 50,
+              width: 50,
               child: IconButton.filled(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.white),
                 ),
                 color: Colors.white,
                 onPressed: () {
-                  // controller.onSwitchCamera();
+                  controller.onSwitchCamera();
                 },
                 icon: const Icon(
                   Iconsax.arrange_square,

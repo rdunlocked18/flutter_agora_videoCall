@@ -3,6 +3,7 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
+import 'package:flutter_video_call/app/core/app_enums.dart';
 import 'package:get/get.dart';
 
 class VideoCallViewController extends GetxController {
@@ -17,7 +18,7 @@ class VideoCallViewController extends GetxController {
   late RtcEngine engine;
   RxList<int> remoteUids = RxList<int>.empty();
   RxString channelNameMain = ''.obs;
-
+  VideoCallViewType videocallType = VideoCallViewType.group;
   late Rx<Offset> offset = const Offset(0, 0).obs;
 
   @override
@@ -33,7 +34,7 @@ class VideoCallViewController extends GetxController {
     clear();
   }
 
-  clear() {
+  void clear() {
     engine.leaveChannel();
     isFront.value = false;
     reConnectingRemoteView.value = false;
@@ -49,8 +50,8 @@ class VideoCallViewController extends GetxController {
     var arguments = Get.arguments;
     var _token = arguments['token'];
     var userId = arguments['userId'];
+    videocallType = arguments['type'];
     channelNameMain.value = arguments['channelName'];
-
     debugPrint("Argument Dataa : $_token $userId ${channelNameMain.value}");
 
     Future.delayed(Duration.zero, () async {

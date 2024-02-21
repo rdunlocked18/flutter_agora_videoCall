@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/core/app_enums.dart';
 import 'package:flutter_video_call/app/data/models/user.dart';
 import 'package:flutter_video_call/app/modules/home/views/group_video_call_home.dart';
 import 'package:flutter_video_call/app/modules/home/views/single_chat_view.dart';
@@ -31,6 +32,7 @@ class HomeController extends GetxController {
   Future<void> startvideoCustomChannelVideoCall() async {
     debugPrint('Start video');
     if (channelNameController.text.isNotEmpty) {
+      isLoading.value = true;
       var response = await getToken(channelNameController.text);
       //
       //debugPrint(response['token']);
@@ -42,7 +44,8 @@ class HomeController extends GetxController {
               arguments: {
                 'userId': response['userId'],
                 'token': response['token'],
-                'channelName': channelNameController.text
+                'channelName': channelNameController.text,
+                'type': VideoCallViewType.group,
               },
             ),
           );
@@ -72,6 +75,7 @@ class HomeController extends GetxController {
               'userId': _response['userId'],
               'token': _response['token'],
               'channelName': _channelName,
+              'type': VideoCallViewType.group,
             },
           ),
         );
@@ -149,9 +153,21 @@ class HomeController extends GetxController {
     ),
   ].obs;
 
-  Future<void> startPersonalVideoCall() async {
-    await permissions.request().then((value) {
-      Get.toNamed(Routes.VIDEOCALL);
-    });
+  Future<void> startPersonalVideoCall(User user) async {
+    isLoading.value = true;
+    var _channelName = user.userName;
+    var _response = await getToken(_channelName);
+
+    await permissions.request().then(
+          (value) => Get.toNamed(
+            Routes.VIDEOCALL,
+            arguments: {
+              'userId': _response['userId'],
+              'token': _response['token'],
+              'channelName': _channelName,
+              'type': VideoCallViewType.personal,
+            },
+          ),
+        );
   }
 }

@@ -66,7 +66,15 @@ class _SingleChatViewState extends State<SingleChatView> {
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
                         onPressed: () {
-                          controller.startPersonalVideoCall();
+                          if (index != 4) {
+                            controller.startPersonalVideoCall(user);
+                          } else {
+                            Get.showSnackbar(GetSnackBar(
+                              message: '${user.userName} is offline',
+                              duration: const Duration(seconds: 1),
+                              isDismissible: true,
+                            ));
+                          }
                         },
                         icon: Icon(
                           index == 4 ? Iconsax.video_slash : Iconsax.video5,

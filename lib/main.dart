@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/core/app_colors.dart';
 
 import 'package:get/get.dart';
 
@@ -7,12 +8,12 @@ import 'app/routes/app_pages.dart';
 void main() {
   runApp(
     GetMaterialApp(
-      color: const Color(0xDBF14D6E),
+      color: AppColors.baseColor,
       theme: ThemeData(
         useMaterial3: true,
-        primaryColor: const Color(0xDBF14D6E),
+        primaryColor: AppColors.baseColor,
       ),
-      title: "Application",
+      title: "Agora Video Call",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     ),

@@ -1,0 +1,4 @@
+enum VideoCallViewType {
+  personal,
+  group,
+}
