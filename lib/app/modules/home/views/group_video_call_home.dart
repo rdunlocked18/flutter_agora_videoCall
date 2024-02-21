@@ -84,7 +84,9 @@ class _GroupVideoCallState extends State<GroupVideoCall> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 90),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.startvideoCustomChannelVideoCall();
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                       const Color(0xDBF14D6E),
@@ -112,7 +114,9 @@ class _GroupVideoCallState extends State<GroupVideoCall> {
               Padding(
                 padding: const EdgeInsets.only(left: 30.0, right: 30),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.startInstantMeeting();
+                  },
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),

@@ -1,5 +1,6 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
 import 'package:get/get.dart';
 
@@ -16,8 +17,11 @@ class VideoCallViewController extends GetxController {
   RxList<int> remoteUids = RxList<int>.empty();
   RxString channelNameMain = ''.obs;
 
+  late Rx<Offset> offset = Offset(0, 0).obs;
+
   @override
   void onInit() {
+    // offset.value = Offset(0, 0);
     super.onInit();
     initilize();
   }

@@ -1,16 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_call/app/core/app_constants.dart';
 import 'package:flutter_video_call/app/data/models/user.dart';
 import 'package:flutter_video_call/app/modules/home/views/group_video_call_home.dart';
 import 'package:flutter_video_call/app/modules/home/views/single_chat_view.dart';
-import 'package:flutter_video_call/app/modules/videocall/views/videocall_view.dart';
 import 'package:flutter_video_call/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:nanoid/async.dart';
 
 class HomeController extends GetxController {
   TextEditingController channelNameController = TextEditingController();
@@ -29,7 +30,8 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
-  Future<void> requestPermissions() async {
+  Future<void> startvideoCustomChannelVideoCall() async {
+    print('Start video');
     if (channelNameController.text.isNotEmpty) {
       var response = await getToken(channelNameController.text);
       //
@@ -55,6 +57,26 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> startInstantMeeting() async {
+    var _response = await getToken(channelNameController.text);
+    var _channelName = await createRandomChannelName();
+    print(_response['token']);
+    print(_response['userId']);
+    print(_channelName);
+    //
+
+    await permissions.request().then(
+          (value) => Get.toNamed(
+            Routes.VIDEOCALL,
+            arguments: {
+              'userId': _response['userId'],
+              'token': _response['token'],
+              'channelName': _channelName,
+            },
+          ),
+        );
+  }
+
   void onBottomNavigationTapped(int index) {
     currentIndex.value = index;
     pageController.jumpToPage(index);
@@ -70,13 +92,18 @@ class HomeController extends GetxController {
         await dio.get('http://54.241.100.253/rtc/$channelName/0/uid/$userId');
 
     if (response.data != null) {
-      print(response.data['rtcToken']);
       token = response.data['rtcToken'];
     }
+
     return {
       'token': token,
       'userId': userId,
     };
+  }
+
+  Future<String> createRandomChannelName() async {
+    var channelName = await nanoid(10);
+    return channelName;
   }
 
   int random(int min, int max) {
