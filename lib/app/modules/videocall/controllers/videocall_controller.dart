@@ -1,7 +1,5 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
-import 'dart:collection';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
@@ -21,7 +19,6 @@ class VideoCallViewController extends GetxController {
   RxList<int> remoteUids = RxList<int>.empty();
   RxString channelNameMain = ''.obs;
   VideoCallViewType videocallType = VideoCallViewType.group;
-  late Rx<Offset> offset = const Offset(0, 0).obs;
   RxDouble zoneHeight = 250.0.obs;
   RxDouble zoneWidth = 200.0.obs;
   RxDouble topY = 21.0.obs;
@@ -31,7 +28,6 @@ class VideoCallViewController extends GetxController {
 
   @override
   void onInit() {
-    // offset.value = Offset(0, 0);
     super.onInit();
     initilize();
   }
@@ -65,14 +61,12 @@ class VideoCallViewController extends GetxController {
     Future.delayed(Duration.zero, () async {
       await _initAgoraRtcEngine();
       _addAgoraEventHandlers();
-      //  await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
       VideoEncoderConfiguration configuration = const VideoEncoderConfiguration(
           dimensions: VideoDimensions(
         width: 1080,
         height: 1920,
       ));
       await engine.setVideoEncoderConfiguration(configuration);
-      //    await engine.leaveChannel();
       await engine.joinChannel(
         token: _token,
         channelId: channelNameMain.value,
@@ -90,7 +84,6 @@ class VideoCallViewController extends GetxController {
       channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
     ));
     await engine.enableVideo();
-    //await engine.startPreview();
     await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
   }
 
@@ -167,12 +160,6 @@ class VideoCallViewController extends GetxController {
       debugPrint(err);
       return {'error': err};
     });
-  }
-
-  Future<void> shareMeetingInfo() async {
-    // print('share started');
-
-    // await Share.share('Join my meeting with code: $channelNameMain');
   }
 
   @override

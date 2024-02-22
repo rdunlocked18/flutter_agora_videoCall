@@ -31,7 +31,11 @@ class VideoCallView extends GetView<VideoCallViewController> {
           actions: [
             IconButton(
               onPressed: () {
-                controller.shareMeetingInfo();
+                Get.showSnackbar(const GetSnackBar(
+                  message: 'Share not available',
+                  duration: Duration(seconds: 2),
+                  isDismissible: true,
+                ));
               },
               icon: const Icon(
                 Iconsax.share,
