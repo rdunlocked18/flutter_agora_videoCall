@@ -1,5 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'dart:collection';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_call/app/core/app_constants.dart';
@@ -20,6 +22,12 @@ class VideoCallViewController extends GetxController {
   RxString channelNameMain = ''.obs;
   VideoCallViewType videocallType = VideoCallViewType.group;
   late Rx<Offset> offset = const Offset(0, 0).obs;
+  RxDouble zoneHeight = 250.0.obs;
+  RxDouble zoneWidth = 200.0.obs;
+  RxDouble topY = 21.0.obs;
+  RxDouble leftX = 16.0.obs;
+  RxDouble initX = 0.0.obs;
+  RxDouble initY = 0.0.obs;
 
   @override
   void onInit() {

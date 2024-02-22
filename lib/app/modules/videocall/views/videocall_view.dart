@@ -108,17 +108,35 @@ class VideoCallView extends GetView<VideoCallViewController> {
                                   ),
                                 ),
                           Obx(
-                            () => Draggable(
-                              feedback: const SizedBox(
-                                width: 200,
-                                height: 250,
-                              ),
-                              child: Positioned(
-                                left: controller.offset.value.dx,
-                                top: controller.offset.value.dy,
+                            () => Positioned(
+                              left: controller.leftX.value,
+                              top: controller.topY.value,
+                              child: GestureDetector(
+                                onPanStart: (details) {
+                                  controller.initX.value =
+                                      details.globalPosition.dx;
+                                  controller.initY.value =
+                                      details.globalPosition.dy;
+                                },
+                                onPanUpdate: (details) {
+                                  final dx = details.globalPosition.dx -
+                                      controller.initX.value;
+                                  final dy = details.globalPosition.dy -
+                                      controller.initY.value;
+                                  controller.initX.value =
+                                      details.globalPosition.dx;
+                                  controller.initY.value =
+                                      details.globalPosition.dy;
+                                  controller.topY.value =
+                                      (controller.topY.value + dy)
+                                          .clamp(0.0, double.infinity);
+                                  controller.leftX.value =
+                                      (controller.leftX.value + dx)
+                                          .clamp(0.0, double.infinity);
+                                },
                                 child: SizedBox(
-                                  width: 200,
-                                  height: 250,
+                                  width: controller.zoneWidth.value,
+                                  height: controller.zoneHeight.value,
                                   child: Center(
                                       child: controller.localUserJoined.value
                                           ? AgoraVideoView(
