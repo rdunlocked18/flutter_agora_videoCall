@@ -182,9 +182,9 @@ class VideoCallView extends GetView<VideoCallViewController> {
           Expanded(
             // flex: 3,
             child: GridView.builder(
-              itemCount: 4,
+              itemCount: 2,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 1,
                 childAspectRatio: 0.8,
               ),
               itemBuilder: (BuildContext context, int index) {
@@ -208,7 +208,7 @@ class VideoCallView extends GetView<VideoCallViewController> {
           Expanded(
             // flex: 3,
             child: GridView.builder(
-              itemCount: 4,
+              itemCount: controller.remoteUids.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.8,
