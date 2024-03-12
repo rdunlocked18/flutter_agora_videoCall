@@ -1,5 +1,5 @@
 class AppConstants {
-  static String agoraAppId = 'cfa03c516b39404b98385605334f5b60';
+  static String agoraAppId = '';
   static String agoraAppName = 'Herculia';
   static String serverUrl = 'http://54.241.100.253/rtc/channelName/0/uid/';
   static String token =
